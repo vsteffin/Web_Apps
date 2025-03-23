@@ -3,35 +3,49 @@ document.addEventListener('DOMContentLoaded', () => {
     const taskDate = document.getElementById('taskDate');
     const addTaskButton = document.getElementById('addTaskButton');
     const taskList = document.getElementById('taskList');
-    const progressBar = document.getElementById('progressBar');
     const completedTaskList = document.getElementById('completedTaskList');
+    const incompleteTaskList = document.getElementById('incompleteTaskList');
     const excelUpload = document.getElementById('excelUpload');
+    const completedCountDisplay = document.getElementById('completedCount');
+    const remainingCountDisplay = document.getElementById('remainingCount');
+
 
     let totalTasks = 0;
     let completedTasks = 0;
     let tasksByDate = {};
 
-    function updateProgressBar() {
-        if (totalTasks === 0) {
-            progressBar.style.width = '0%';
-        } else {
-            const progress = (completedTasks / totalTasks) * 100;
-            progressBar.style.width = `${progress}%`;
-        }
+    function updateTaskCounts() {
+        completedCountDisplay.textContent = `Completed: ${completedTasks}`;
+        remainingCountDisplay.textContent = `Remaining: ${totalTasks - completedTasks}`;
     }
 
     function renderTasks() {
-        taskList.innerHTML = '';
+        taskList.innerHTML = '<h2>Active Tasks</h2>';
+        completedTaskList.innerHTML = '<h2>Completed Tasks</h2>';
+        incompleteTaskList.innerHTML = '<h2>Incomplete Tasks</h2>';
         Object.keys(tasksByDate).forEach((date) => {
             const dateHeader = document.createElement('li');
             dateHeader.innerHTML = `<strong>${date}</strong>`;
-            taskList.appendChild(dateHeader);
+             if(tasksByDate[date].some(task=>!task.isCompleted)){
+                 taskList.appendChild(dateHeader);
+             }
+
 
             tasksByDate[date].forEach((task) => {
-                taskList.appendChild(task.element);
+                if (task.isCompleted) {
+                    completedTaskList.appendChild(task.element);
+                } else {
+                    if(task.isNew || task.isInProgress){
+                         taskList.appendChild(task.element);
+                    }
+                    else{
+                        incompleteTaskList.appendChild(task.element);
+                    }
+
+                }
             });
         });
-        updateProgressBar();
+        updateTaskCounts();
     }
 
     addTaskButton.addEventListener('click', () => {
@@ -50,9 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const listItem = document.createElement('li');
         listItem.innerHTML = `
             <span style="${isSubtask ? 'margin-left: 20px;' : ''}">${taskText}</span>
-            <button class="complete">😊</button>
-            <button class="incomplete">🙁</button>
-            <button class="inprogress">😐</button>
+            <button class="complete">${isSubtask ? '✅' : '😊'}</button>
+            <button class="incomplete">${isSubtask ? '❌' : '🙁'}</button>
+            <button class="inprogress">${isSubtask ? '▶️' : '😐'}</button>
             ${isSubtask ? '' : '<button class="subtask">Subtasks</button>'}
             <button class="delete">Delete</button>
             ${isSubtask ? '' : '<ul class="subtasks" style="display:none;"></ul>'}
@@ -64,7 +78,9 @@ document.addEventListener('DOMContentLoaded', () => {
             element: listItem,
             isCompleted: false,
             isSubtask: isSubtask,
-            parentTask: parentTask
+            parentTask: parentTask,
+            isNew: true,
+            isInProgress:false
         };
 
         if (!tasksByDate[date]) {
@@ -81,37 +97,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
         completeButton.addEventListener('click', () => {
             taskObject.isCompleted = true;
+            taskObject.isNew=false;
+            taskObject.isInProgress=false;
             listItem.querySelector('span').classList.add('completed');
+            listItem.querySelector('span').classList.remove('incomplete');
+            listItem.querySelector('span').classList.remove('inprogress');
             completeButton.style.display = 'none';
             incompleteButton.style.display = 'none';
             inprogressButton.style.display = 'none';
             completedTasks++;
             renderTasks();
-            completedTaskList.appendChild(listItem);
-            listItem.querySelector('.delete').remove();
 
         });
 
         incompleteButton.addEventListener('click', () => {
             taskObject.isCompleted = false;
+            taskObject.isNew=false;
+            taskObject.isInProgress=false;
             listItem.querySelector('span').classList.remove('completed');
+            listItem.querySelector('span').classList.add('incomplete');
+            listItem.querySelector('span').classList.remove('inprogress');
             completeButton.style.display = 'block';
-            incompleteButton.style.display = 'block';
+            incompleteButton.style.display = 'none';
             inprogressButton.style.display = 'block';
             if (completedTasks > 0) {
-              completedTasks--;
+                completedTasks--;
             }
             renderTasks();
         });
 
         inprogressButton.addEventListener('click', () => {
             taskObject.isCompleted = false;
+            taskObject.isNew=false;
+            taskObject.isInProgress=true;
             listItem.querySelector('span').classList.remove('completed');
+            listItem.querySelector('span').classList.remove('incomplete');
+            listItem.querySelector('span').classList.add('inprogress');
             completeButton.style.display = 'block';
             incompleteButton.style.display = 'block';
-            inprogressButton.style.display = 'block';
+            inprogressButton.style.display = 'none';
             if (completedTasks > 0) {
-              completedTasks--;
+                completedTasks--;
             }
             renderTasks();
         });
@@ -121,9 +147,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 completedTasks--;
             }
             totalTasks--;
-            tasksByDate[date] = tasksByDate[date].filter(task => task !== taskObject);
-            if (tasksByDate[date].length === 0) {
-                delete tasksByDate[date];
+            let taskDate = taskObject.date;
+            tasksByDate[taskDate] = tasksByDate[taskDate].filter(task => task !== taskObject);
+            if (tasksByDate[taskDate].length === 0) {
+                delete tasksByDate[taskDate];
             }
             renderTasks();
         });
@@ -174,13 +201,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
                 jsonData.forEach((row) => {
-                    if (row[2]) {
-                        const excelDate = row[0];
-                        const jsDate = new Date((excelDate - 25569) * 86400 * 1000);
+                    if (row[0] && row[2]) {
+                        let excelDate = row[0];
+                        let jsDate;
+
+                        if (typeof excelDate === 'number') {
+                            jsDate = new Date((excelDate - 25569) * 86400 * 1000);
+                        } else if (excelDate instanceof Date) {
+                            jsDate = excelDate;
+                        } else {
+                            jsDate = new Date(excelDate);
+                        }
+
+                        if (isNaN(jsDate)) {
+                            console.error("Invalid date:", excelDate);
+                            return;
+                        }
                         const formattedDate = jsDate.toISOString().slice(0, 10);
                         addTask(row[2], formattedDate);
                     }
                 });
+                renderTasks();
             };
             reader.readAsArrayBuffer(file);
         }

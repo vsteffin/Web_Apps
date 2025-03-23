@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enhanced Planner</title>
+    <title>Exam Planner</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
 </head>
 <body>
-    <div class="progress-container">
-        <div class="progress-bar" id="progressBar"></div>
+    <div class="task-count-container">
+        <span id="completedCount">Completed: 0</span> |
+        <span id="remainingCount">Remaining: 0</span>
     </div>
     <div class="container">
         <h1>Enhanced Planner</h1>
@@ -19,10 +20,15 @@
             <button id="addTaskButton">Add</button>
             <input type="file" id="excelUpload" accept=".xlsx, .xls">
         </div>
-        <ul id="taskList"></ul>
-
-        <h2>Completed Tasks</h2>
-        <ul id="completedTaskList"></ul>
+        <ul id="taskList">
+            <h2>Active Tasks</h2>
+        </ul>
+        <ul id="completedTaskList">
+            <h2>Completed Tasks</h2>
+        </ul>
+        <ul id="incompleteTaskList">
+            <h2>Incomplete Tasks</h2>
+        </ul>
     </div>
     <script src="script.js"></script>
 </body>
