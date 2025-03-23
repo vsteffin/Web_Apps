@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let totalTasks = 0;
     let completedTasks = 0;
+    let tasksByDate = {};
 
     function updateProgressBar() {
         if (totalTasks === 0) {
@@ -17,6 +18,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const progress = (completedTasks / totalTasks) * 100;
             progressBar.style.width = `${progress}%`;
         }
+    }
+
+    function renderTasks() {
+        taskList.innerHTML = '';
+        Object.keys(tasksByDate).forEach((date) => {
+            const dateHeader = document.createElement('li');
+            dateHeader.innerHTML = `<strong>${date}</strong>`;
+            taskList.appendChild(dateHeader);
+
+            tasksByDate[date].forEach((task) => {
+                taskList.appendChild(task.element);
+            });
+        });
+        updateProgressBar();
     }
 
     addTaskButton.addEventListener('click', () => {
@@ -29,22 +44,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    function addTask(taskText, date) {
+    function addTask(taskText, date, isSubtask = false, parentTask = null) {
         totalTasks++;
-        updateProgressBar();
 
         const listItem = document.createElement('li');
         listItem.innerHTML = `
-            <span>${taskText} (${date})</span>
+            <span>${taskText}</span>
             <button class="complete">😊</button>
             <button class="incomplete">🙁</button>
             <button class="inprogress">😐</button>
-            <button class="subtask">Subtasks</button>
+            ${isSubtask ? '' : '<button class="subtask">Subtasks</button>'}
             <button class="delete">Delete</button>
-            <ul class="subtasks" style="display:none;"></ul>
+            ${isSubtask ? '' : '<ul class="subtasks" style="display:none;"></ul>'}
         `;
-        taskList.appendChild(listItem);
-        // ... (rest of the addTask function remains the same) ...
+
+        const taskObject = {
+            text: taskText,
+            date: date,
+            element: listItem,
+            isCompleted: false,
+        };
+
+        if (!tasksByDate[date]) {
+            tasksByDate[date] = [];
+        }
+        tasksByDate[date].push(taskObject);
+
         const completeButton = listItem.querySelector('.complete');
         const incompleteButton = listItem.querySelector('.incomplete');
         const inprogressButton = listItem.querySelector('.inprogress');
@@ -53,42 +78,31 @@ document.addEventListener('DOMContentLoaded', () => {
         const subtaskList = listItem.querySelector('.subtasks');
 
         completeButton.addEventListener('click', () => {
-            // ... (rest of the completeButton event listener remains the same) ...
+            taskObject.isCompleted = true;
+            listItem.querySelector('span').classList.add('completed');
+            completeButton.style.display = 'none';
+            incompleteButton.style.display = 'none';
+            inprogressButton.style.display = 'none';
+            completedTasks++;
+            renderTasks();
             completedTaskList.appendChild(listItem);
             listItem.querySelector('.delete').remove();
+
         });
+
         incompleteButton.addEventListener('click', () => {
-             // ... (rest of the incompleteButton event listener remains the same) ...
+            taskObject.isCompleted = false;
+            listItem.querySelector('span').classList.remove('completed');
+            completeButton.style.display = 'block';
+            incompleteButton.style.display = 'block';
+            inprogressButton.style.display = 'block';
+            completedTasks--;
+            renderTasks();
         });
+
         inprogressButton.addEventListener('click', () => {
-             // ... (rest of the inprogressButton event listener remains the same) ...
-        });
-        deleteButton.addEventListener('click', () => {
-            // ... (rest of the deleteButton event listener remains the same) ...
-        });
-        subtaskButton.addEventListener('click', () => {
-            // ... (rest of the subtaskButton event listener remains the same) ...
-        });
-    }
-
-    excelUpload.addEventListener('change', (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, { type: 'array' });
-                const sheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[sheetName];
-                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: ['Date', 'Day', 'Task'] });
-
-                jsonData.forEach((row) => {
-                    if (row.Task) {
-                        addTask(row.Task, row.Date);
-                    }
-                });
-            };
-            reader.readAsArrayBuffer(file);
-        }
-    });
-});
+            taskObject.isCompleted = false;
+            listItem.querySelector('span').classList.remove('completed');
+            completeButton.style.display = 'block';
+            incompleteButton.style.display = 'block';
+            inprogressButton.
