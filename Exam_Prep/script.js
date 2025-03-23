@@ -424,9 +424,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function loadInitialTasks() {
-      if (currentUser) {
-        loadTasks(currentUser.uid);
-      }
+      auth.onAuthStateChanged(user => { //wrap loadTasks()
+        if (user) {
+          currentUser = user;
+          loadTasks(currentUser.uid);
+        }
+      });
     }
     loadInitialTasks();
 });
