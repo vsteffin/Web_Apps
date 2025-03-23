@@ -6,6 +6,9 @@
     <title>Exam Planner</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
 <body>
     <div class="task-count-container">
@@ -14,7 +17,11 @@
     </div>
     <div class="container">
         <h1>Exam Planner</h1>
-        <div class="input-container">
+        <div id="auth-container">
+            <button id="loginButton">Login/Signup</button>
+            <p id="loginMessage"></p>
+        </div>
+        <div class="input-container" style="display: none;">
             <input type="text" id="taskInput" placeholder="Add a new task...">
             <input type="date" id="taskDate">
             <button id="addTaskButton">Add</button>
