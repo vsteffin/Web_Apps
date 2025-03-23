@@ -4,10 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Exam Planner</title>
-	<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
-	<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"></script>
-	<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js"></script>  
-
     <style>
         /* --- CSS --- */
         body {
@@ -160,7 +156,7 @@
         <span id="remainingCount">Remaining: 0</span>
     </div>
     <div class="container">
-        <h1>Exam Planner</h1>
+        <h1>Enhanced Planner</h1>
         <div id="auth-container">
             <button id="loginButton">Login/Signup</button>
             <p id="loginMessage"></p>
@@ -190,9 +186,6 @@
         </div>
     </div>
     <script>
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import 'firebase/firestore';
         /* --- JavaScript --- */
 const firebaseConfig = {
   apiKey: "AIzaSyA-HNR_SkfHEYWYKOq684zBXYhlFUkM6BM",
@@ -203,8 +196,9 @@ const firebaseConfig = {
   appId: "1:409699118354:web:517264bc5e406980f597cb"
 };
 
-const firebaseApp = initializeApp(firebaseConfig);
-const auth = getAuth(firebaseApp);
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const database = firebase.database();
 
 document.addEventListener('DOMContentLoaded', () => {
     const taskInput = document.getElementById('taskInput');
