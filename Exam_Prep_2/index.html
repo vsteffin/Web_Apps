@@ -232,17 +232,9 @@
  </div>
  <script>
      /* --- JavaScript --- */
-     const firebaseConfig = {
-	  apiKey: "AIzaSyA-HNR_SkfHEYWYKOq684zBXYhlFUkM6BM",
-	  authDomain: "exam-prep-df9de.firebaseapp.com",
-	  databaseURL: "https://exam-prep-df9de-default-rtdb.firebaseio.com",
-	  projectId: "exam-prep-df9de",
-	  storageBucket: "exam-prep-df9de.firebasestorage.app",
-	  messagingSenderId: "409699118354",
-	  appId: "1:409699118354:web:6d2e01aab7fd67b4f597cb"
-	};
+     
 
-     firebase.initializeApp(firebaseConfig);
+     firebase.initializeApp(window.firebaseConfig);
      const auth = firebase.auth();
      const database = firebase.database();
 
