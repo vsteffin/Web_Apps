@@ -262,7 +262,7 @@
 		  projectId: "exam-prep-df9de",
 		  storageBucket: "exam-prep-df9de.firebasestorage.app",
 		  messagingSenderId: "409699118354",
-		  appId: "1:409699118354:web:0760336f373f685af597cb"
+		  appId: "1:409699118354:web:75acc077af900662f597cb"
 		};
 
 
@@ -569,8 +569,8 @@
                             }, 3000);
                         })
                         .catch((error) => {
+                            console.error("Error saving data:", error); // Log the error to the console
                             saveMessage.textContent = 'Error saving progress: ' + error.message;
-                            console.error("Error saving data:", error);
                             setTimeout(() => {
                                 saveMessage.textContent = '';
                             }, 3000);
@@ -727,11 +727,4 @@
 
             saveButton.addEventListener('click', () => {
                 saveTasks();
-            });
-
-        });
-        /* --- End JavaScript --- */
-    </script>
-</body>
-
-</html>
+            
