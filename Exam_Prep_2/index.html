@@ -425,15 +425,17 @@
          }
  
          function initializeTaskElement(taskObject) {
-             const listItem = taskObject.element;
+             // Clone the element to clear old event listeners
+             const oldElement = taskObject.element;
+             const listItem = oldElement.cloneNode(true);
              
-             // Clear previous event listeners by cloning and replacing the element
-             const newListItem = listItem.cloneNode(true);
-             if (listItem.parentNode) {
-                 listItem.parentNode.replaceChild(newListItem, listItem);
+             // Replace in DOM if needed
+             if (oldElement.parentNode) {
+                 oldElement.parentNode.replaceChild(listItem, oldElement);
              }
-             taskObject.element = newListItem;
-             listItem = newListItem;
+             
+             // Update the reference
+             taskObject.element = listItem;
              
              const completeButton = listItem.querySelector('.complete');
              const incompleteButton = listItem.querySelector('.incomplete');
