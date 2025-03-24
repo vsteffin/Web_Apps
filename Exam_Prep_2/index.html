@@ -2,309 +2,397 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exam Planner</title>
-    <style>
-        /* --- CSS --- */
-        body {
-            font-family: sans-serif;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #f4f4f4;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exam Planner</title>
+<style>
+    /* --- CSS --- */
+    body {
+        font-family: sans-serif;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        min-height: 100vh;
+        background-color: #f4f4f4;
+    }
 
-        .task-count-container {
-            width: 100%;
-            text-align: center;
-            margin-bottom: 10px;
-            font-size: 1rem;
-        }
+    .task-count-container {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 10px;
+        font-size: 1rem;
+    }
 
-        .container {
-            width: 500px;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-top: 0;
-        }
+    .container {
+        width: 500px;
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-top: 0;
+        display: flex;
+        flex-direction: column;
+    }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
 
-        #auth-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 20px;
-        }
+    #auth-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 20px;
+    }
 
-        #loginButton {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-        }
+    #loginButton {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+    }
 
-        #loginMessage {
-            margin-top: 10px;
-            color: #008000;
-            font-size: 0.9rem;
-        }
+    #loginMessage {
+        margin-top: 10px;
+        color: #008000;
+        font-size: 0.9rem;
+    }
 
+    .save-notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        transition: opacity 0.5s;
+        z-index: 1000;
+    }
 
-        .input-container {
-            display: flex;
-            margin-bottom: 15px;
-        }
+    .input-container {
+        display: flex;
+        margin-bottom: 15px;
+    }
 
-        input[type="text"],
-        input[type="date"],
-        input[type="file"] {
-            flex-grow: 1;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-right: 5px;
-        }
+    input[type="text"],
+    input[type="date"],
+    input[type="file"] {
+        flex-grow: 1;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-right: 5px;
+    }
 
-        button {
-            padding: 8px 15px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+    button {
+        padding: 8px 15px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
 
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
 
-        li {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    li {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+    }
 
-        li span {
-            flex-grow: 1;
-        }
+    li span {
+        flex-grow: 1;
+    }
 
-        li button {
-            margin-left: 10px;
-        }
+    li button {
+        margin-left: 10px;
+    }
 
-        li.completed span {
-            text-decoration: line-through;
-            color: grey;
-        }
+    li.completed span {
+        text-decoration: line-through;
+        color: grey;
+    }
 
-        .subtasks {
-            margin-left: 20px;
-        }
+    .subtasks {
+        margin-left: 20px;
+        width: 100%;
+    }
 
-        .subtasks li {
-            padding: 5px;
-        }
+    .subtasks li {
+        padding: 5px;
+    }
 
-        h2 {
-            margin-top: 20px;
-            margin-bottom: 10px;
-        }
+    .subtask-input-container {
+        width: 100%;
+        display: flex;
+        margin-top: 10px;
+    }
 
-        #completedTaskList li span {
-            text-decoration: line-through;
-            color: grey;
-        }
+    .subtask-input-container input {
+        flex-grow: 1;
+        margin-right: 5px;
+    }
 
-        #incompleteTaskList li span {
-            color: #f59e0b;
-        }
+    h2 {
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
 
-        #taskList li span {
-            color: #ef4444;
-        }
+    #completedTaskList li span {
+        text-decoration: line-through;
+        color: grey;
+    }
 
-        #taskSections {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            margin-top: 20px;
-        }
+    #incompleteTaskList li span {
+        color: #f59e0b;
+    }
 
-        #activeTasksSection,
-        #completedTasksSection,
-        #incompleteTasksSection {
-            width: 100%;
-            margin-bottom: 20px;
-        }
+    #taskList li span {
+        color: #ef4444;
+    }
 
-        .date-picker-container {
-            position: relative;
-            display: inline-block;
-        }
+    #taskSections {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        margin-top: 20px;
+    }
 
-        .date-picker {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            z-index: 10;
-            background-color: white;
-            border: 1px solid #ccc;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            padding: 10px;
-            display: none;
-        }
+    #activeTasksSection,
+    #completedTasksSection,
+    #incompleteTasksSection {
+        width: 100%;
+        margin-bottom: 20px;
+    }
 
-        .date-picker table {
-            border-collapse: collapse;
-        }
+    .date-picker-container {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+    }
 
-        .date-picker th,
-        .date-picker td {
-            padding: 5px;
-            text-align: center;
-            cursor: pointer;
-        }
+    .date-picker {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 10;
+        background-color: white;
+        border: 1px solid #ccc;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        padding: 10px;
+        display: none;
+    }
 
-        .date-picker th {
-            font-weight: bold;
-        }
+    .date-picker-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
 
-        .date-picker td.selected {
-            background-color: #4CAF50;
-            color: white;
-        }
+    .date-picker table {
+        border-collapse: collapse;
+    }
 
-        #saveButton {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            align-self: center;
-        }
+    .date-picker th,
+    .date-picker td {
+        padding: 5px;
+        text-align: center;
+        cursor: pointer;
+    }
 
-        #saveMessage {
-            margin-top: 10px;
-            text-align: center;
-            font-size: 0.9rem;
-        }
+    .date-picker th {
+        font-weight: bold;
+    }
 
-        /* --- End CSS --- */
-    </style>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    .date-picker td.selected {
+        background-color: #4CAF50;
+        color: white;
+    }
+    
+    .date-picker-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 5;
+    }
+    /* --- End CSS --- */
+</style>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
 </head>
 
 <body>
-    <div class="task-count-container">
-        <span id="completedCount">Completed: 0</span> |
-        <span id="remainingCount">Remaining: 0</span>
+<div class="task-count-container">
+    <span id="completedCount">Completed: 0</span> |
+    <span id="remainingCount">Remaining: 0</span>
+</div>
+<div class="container">
+    <button id="saveButton" style="margin-bottom: 10px;">Save Progress</button> <!-- Save Button at Top -->
+    <h1>Exam Planner</h1>
+    <div id="auth-container">
+        <button id="loginButton">Login/Signup</button>
+        <p id="loginMessage"></p>
     </div>
-    <div class="container">
-        <h1>Exam Planner</h1>
-        <div id="auth-container">
-            <button id="loginButton">Login/Signup</button>
-            <p id="loginMessage"></p>
-        </div>
-        <div class="input-container" style="display: none;">
-            <input type="text" id="taskInput" placeholder="Add a new task...">
-            <input type="date" id="taskDate">
-            <button id="addTaskButton">Add</button>
-            <input type="file" id="excelUpload" accept=".xlsx, .xls">
-        </div>
-        <div id="taskSections">
-            <div id="activeTasksSection">
-                <ul id="taskList">
-                    <h2>Active Tasks</h2>
-                </ul>
-            </div>
-            <div id="completedTasksSection">
-                <ul id="completedTaskList">
-                    <h2>Completed Tasks</h2>
-                </ul>
-            </div>
-            <div id="incompleteTasksSection">
-                <ul id="incompleteTaskList">
-                    <h2>Incomplete Tasks</h2>
-                </ul>
-            </div>
-        </div>
-        <button id="saveButton" style="display: none;">Save Progress</button>
-        <p id="saveMessage"></p>
+    <div class="input-container" style="display: none;">
+        <input type="text" id="taskInput" placeholder="Add a new task...">
+        <input type="date" id="taskDate">
+        <button id="addTaskButton">Add</button>
+        <input type="file" id="excelUpload" accept=".xlsx, .xls">
     </div>
-    <script>
-        /* --- JavaScript --- */
-        const firebaseConfig = {
-		  apiKey: "AIzaSyA-HNR_SkfHEYWYKOq684zBXYhlFUkM6BM",
-		  authDomain: "exam-prep-df9de.firebaseapp.com",
-		  databaseURL: "https://exam-prep-df9de-default-rtdb.firebaseio.com",
-		  projectId: "exam-prep-df9de",
-		  storageBucket: "exam-prep-df9de.firebasestorage.app",
-		  messagingSenderId: "409699118354",
-		  appId: "1:409699118354:web:75acc077af900662f597cb"
-		};
+    <div id="taskSections">
+        <div id="activeTasksSection">
+            <ul id="taskList">
+                <h2>Active Tasks</h2>
+            </ul>
+        </div>
+        <div id="completedTasksSection">
+            <ul id="completedTaskList">
+                <h2>Completed Tasks</h2>
+            </ul>
+        </div>
+        <div id="incompleteTasksSection">
+            <ul id="incompleteTaskList">
+                <h2>Incomplete Tasks</h2>
+            </ul>
+        </div>
+    </div>
+</div>
+<script>
+    /* --- JavaScript --- */
+    const firebaseConfig = {
+	  apiKey: "AIzaSyA-HNR_SkfHEYWYKOq684zBXYhlFUkM6BM",
+	  authDomain: "exam-prep-df9de.firebaseapp.com",
+	  databaseURL: "https://exam-prep-df9de-default-rtdb.firebaseio.com",
+	  projectId: "exam-prep-df9de",
+	  storageBucket: "exam-prep-df9de.firebasestorage.app",
+	  messagingSenderId: "409699118354",
+	  appId: "1:409699118354:web:6d2e01aab7fd67b4f597cb"
+	};
 
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const database = firebase.database();
 
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const database = firebase.database();
+    document.addEventListener('DOMContentLoaded', () => {
+        // Cache DOM elements
+        const elements = {
+            taskInput: document.getElementById('taskInput'),
+            taskDate: document.getElementById('taskDate'),
+            addTaskButton: document.getElementById('addTaskButton'),
+            taskList: document.getElementById('taskList'),
+            completedTaskList: document.getElementById('completedTaskList'),
+            incompleteTaskList: document.getElementById('incompleteTaskList'),
+            excelUpload: document.getElementById('excelUpload'),
+            completedCountDisplay: document.getElementById('completedCount'),
+            remainingCountDisplay: document.getElementById('remainingCount'),
+            loginButton: document.getElementById('loginButton'),
+            loginMessage: document.getElementById('loginMessage'),
+            inputContainer: document.querySelector('.input-container'),
+            taskSections: document.getElementById('taskSections'),
+            saveButton: document.getElementById('saveButton')
+        };
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const taskInput = document.getElementById('taskInput');
-            const taskDate = document.getElementById('taskDate');
-            const addTaskButton = document.getElementById('addTaskButton');
-            const taskList = document.getElementById('taskList');
-            const completedTaskList = document.getElementById('completedTaskList');
-            const incompleteTaskList = document.getElementById('incompleteTaskList');
-            const excelUpload = document.getElementById('excelUpload');
-            const completedCountDisplay = document.getElementById('completedCount');
-            const remainingCountDisplay = document.getElementById('remainingCount');
-            const loginButton = document.getElementById('loginButton');
-            const loginMessage = document.getElementById('loginMessage');
-            const inputContainer = document.querySelector('.input-container');
-            const taskSections = document.getElementById('taskSections');
-            const activeTasksSection = document.getElementById('activeTasksSection');
-            const completedTasksSection = document.getElementById('completedTasksSection');
-            const incompleteTasksSection = document.getElementById('incompleteTasksSection');
-            const saveButton = document.getElementById('saveButton');
-            const saveMessage = document.getElementById('saveMessage');
+        // App state
+        const state = {
+            totalTasks: 0,
+            completedTasks: 0,
+            tasksByDate: {},
+            currentUser: null
+        };
 
-            let totalTasks = 0;
-            let completedTasks = 0;
-            let tasksByDate = {};
-            let currentUser;
-
-            function updateTaskCounts() {
-                completedCountDisplay.textContent = `Completed: ${completedTasks}`;
-                remainingCountDisplay.textContent = `Remaining: ${totalTasks - completedTasks}`;
+        // Utility functions
+        const utils = {
+            showNotification(message, isError = false) {
+                const notification = document.createElement('div');
+                notification.className = 'save-notification';
+                notification.style.backgroundColor = isError ? '#f44336' : '#4CAF50';
+                notification.textContent = message;
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.style.opacity = '0';
+                    setTimeout(() => notification.remove(), 500);
+                }, 2000);
+            },
+            
+            updateTaskCounts() {
+                elements.completedCountDisplay.textContent = `Completed: ${state.completedTasks}`;
+                elements.remainingCountDisplay.textContent = `Remaining: ${state.totalTasks - state.completedTasks}`;
+            },
+            
+            formatDate(date) {
+                if (!date) return null;
+                try {
+                    if (typeof date === 'string') return date;
+                    return date instanceof Date ? date.toISOString().slice(0, 10) : null;
+                } catch (e) {
+                    console.error("Date formatting error:", e);
+                    return null;
+                }
+            },
+            
+            parseExcelDate(excelDate) {
+                try {
+                    let jsDate;
+                    if (typeof excelDate === 'number') {
+                        jsDate = new Date((excelDate - 25569) * 86400 * 1000);
+                    } else if (excelDate instanceof Date) {
+                        jsDate = excelDate;
+                    } else {
+                        jsDate = new Date(excelDate);
+                    }
+                    
+                    return isNaN(jsDate) ? null : jsDate;
+                } catch (e) {
+                    console.error("Excel date parsing error:", e);
+                    return null;
+                }
+            },
+            
+            closeDatePickers() {
+                const pickers = document.querySelectorAll('.date-picker-container');
+                pickers.forEach(picker => picker.remove());
+                
+                const overlays = document.querySelectorAll('.date-picker-overlay');
+                overlays.forEach(overlay => overlay.remove());
+            },
+            
+            // Create a debounced version of a function
+            debounce(func, delay) {
+                let timeout;
+                return function(...args) {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(this, args), delay);
+                };
             }
+        };
 
-            function renderTasks() {
+        // Task management functions
+        const taskManager = {
+            renderTasks() {
                 // Clear all task lists
-                taskList.innerHTML = '<h2>Active Tasks</h2>';
-                completedTaskList.innerHTML = '<h2>Completed Tasks</h2>';
-                incompleteTaskList.innerHTML = '<h2>Incomplete Tasks</h2>';
+                elements.taskList.innerHTML = '<h2>Active Tasks</h2>';
+                elements.completedTaskList.innerHTML = '<h2>Completed Tasks</h2>';
+                elements.incompleteTaskList.innerHTML = '<h2>Incomplete Tasks</h2>';
 
                 // Function to append tasks to the appropriate list
                 function appendTasks(date, tasks, list) {
@@ -317,58 +405,53 @@
                             task.element = document.createElement('li');
                         }
                         list.appendChild(task.element);
-                        initializeTaskElement(task); // Make sure event listeners are attached
+                        taskManager.initializeTaskElement(task); // Make sure event listeners are attached
                     });
                 }
 
                 // Sort dates
-                const sortedDates = Object.keys(tasksByDate).sort();
+                const sortedDates = Object.keys(state.tasksByDate).sort();
 
-                // Append active tasks
+                // Append tasks to respective lists
                 sortedDates.forEach(date => {
-                    const activeTasks = tasksByDate[date].filter(task => !task.isCompleted);
+                    const activeTasks = state.tasksByDate[date].filter(task => !task.isCompleted && !task.isInProgress);
                     if (activeTasks.length > 0) {
-                        appendTasks(date, activeTasks, taskList);
+                        appendTasks(date, activeTasks, elements.taskList);
                     }
-                });
-
-                // Append completed tasks
-                sortedDates.forEach(date => {
-                    const completedTasksForDate = tasksByDate[date].filter(task => task.isCompleted);
+                    
+                    const completedTasksForDate = state.tasksByDate[date].filter(task => task.isCompleted);
                     if (completedTasksForDate.length > 0) {
-                        appendTasks(date, completedTasksForDate, completedTaskList);
+                        appendTasks(date, completedTasksForDate, elements.completedTaskList);
                     }
-                });
-
-                // Append incomplete tasks
-                sortedDates.forEach(date => {
-                    const incompleteTasksForDate = tasksByDate[date].filter(task => !task.isCompleted && !task.isInProgress && !task.isNew);
+                    
+                    const incompleteTasksForDate = state.tasksByDate[date].filter(task => !task.isCompleted && !task.isInProgress && !task.isNew);
                     if (incompleteTasksForDate.length > 0) {
-                        appendTasks(date, incompleteTasksForDate, incompleteTaskList);
+                        appendTasks(date, incompleteTasksForDate, elements.incompleteTaskList);
                     }
                 });
 
-                updateTaskCounts();
-                if (currentUser) {
-                    saveButton.style.display = 'block';
-                } else {
-                    saveButton.style.display = 'none';
-                }
-            }
+                utils.updateTaskCounts();
+            },
 
-            function addTask(taskText, date, isSubtask = false, parentTask = null) {
-                totalTasks++;
+            addTask(taskText, date, isSubtask = false, parentTask = null) {
+                // Validate input
+                if (!taskText || !date) {
+                    console.error("Cannot add task: missing text or date");
+                    return;
+                }
+
+                state.totalTasks++;
                 const listItem = document.createElement('li');
                 listItem.innerHTML = `
-        <span style="${isSubtask ? 'margin-left: 20px;' : ''}">${taskText}</span>
-        <button class="complete">${isSubtask ? '✅' : '😊'}</button>
-        <button class="incomplete">${isSubtask ? '❌' : '🙁'}</button>
-        <button class="inprogress">${isSubtask ? '▶️' : '😐'}</button>
-        ${isSubtask ? '' : '<button class="subtask">Subtasks</button>'}
-        <button class="edit-date">Edit Date</button>
-        <button class="delete">Delete</button>
-        ${isSubtask ? '' : '<ul class="subtasks" style="display:none;"></ul>'}
-        `;
+                    <span style="${isSubtask ? 'margin-left: 20px;' : ''}">${taskText}</span>
+                    <button class="complete">${isSubtask ? '✅' : '😊'}</button>
+                    <button class="incomplete">${isSubtask ? '❌' : '🙁'}</button>
+                    <button class="inprogress">${isSubtask ? '▶️' : '😐'}</button>
+                    ${isSubtask ? '' : '<button class="subtask">Subtasks</button>'}
+                    <button class="edit-date">Edit Date</button>
+                    <button class="delete">Delete</button>
+                    ${isSubtask ? '' : '<ul class="subtasks" style="display:none;"></ul>'}
+                `;
 
                 const taskObject = {
                     text: taskText,
@@ -381,15 +464,15 @@
                     isInProgress: false
                 };
 
-                if (!tasksByDate[date]) {
-                    tasksByDate[date] = [];
+                if (!state.tasksByDate[date]) {
+                    state.tasksByDate[date] = [];
                 }
-                tasksByDate[date].push(taskObject);
-                initializeTaskElement(taskObject);
-                renderTasks();
-            }
+                state.tasksByDate[date].push(taskObject);
+                this.initializeTaskElement(taskObject);
+                this.renderTasks();
+            },
 
-            function initializeTaskElement(taskObject) {
+            initializeTaskElement(taskObject) {
                 const listItem = taskObject.element;
                 const completeButton = listItem.querySelector('.complete');
                 const incompleteButton = listItem.querySelector('.incomplete');
@@ -409,8 +492,8 @@
                     completeButton.style.display = 'none';
                     incompleteButton.style.display = 'block';
                     inprogressButton.style.display = 'block';
-                    completedTasks++;
-                    renderTasks();
+                    state.completedTasks++;
+                    this.renderTasks();
                 });
 
                 incompleteButton.addEventListener('click', () => {
@@ -423,7 +506,7 @@
                     completeButton.style.display = 'block';
                     incompleteButton.style.display = 'none';
                     inprogressButton.style.display = 'block';
-                    renderTasks();
+                    this.renderTasks();
                 });
 
                 inprogressButton.addEventListener('click', () => {
@@ -436,218 +519,100 @@
                     completeButton.style.display = 'block';
                     incompleteButton.style.display = 'block';
                     inprogressButton.style.display = 'none';
-                    renderTasks();
+                    this.renderTasks();
                 });
 
                 deleteButton.addEventListener('click', () => {
                     if (taskObject.isCompleted) {
-                        completedTasks--;
+                        state.completedTasks--;
                     }
-                    totalTasks--;
+                    state.totalTasks--;
                     let taskDate = taskObject.date;
-                    tasksByDate[taskDate] = tasksByDate[taskDate].filter(task => task !== taskObject);
-                    if (tasksByDate[taskDate].length === 0) {
-                        delete tasksByDate[taskDate];
+                    state.tasksByDate[taskDate] = state.tasksByDate[taskDate].filter(task => task !== taskObject);
+                    if (state.tasksByDate[taskDate].length === 0) {
+                        delete state.tasksByDate[taskDate];
                     }
-                    renderTasks();
+                    this.renderTasks();
                 });
 
                 editDateButton.addEventListener('click', () => {
-                    showDatePicker(taskObject, listItem);
+                    utils.closeDatePickers(); // Close any open date pickers
+                    this.showDatePicker(taskObject, listItem);
                 });
 
                 if (subtaskButton) {
                     subtaskButton.addEventListener('click', () => {
-                        if (subtaskList.style.display === 'none') {
-                            subtaskList.style.display = 'block';
+                        // Toggle subtask list visibility
+                        subtaskList.style.display = subtaskList.style.display === 'none' ? 'block' : 'none';
+                        
+                        // Remove existing subtask input if it exists
+                        const existingContainer = listItem.querySelector('.subtask-input-container');
+                        if (existingContainer) {
+                            existingContainer.remove();
+                            return;
+                        }
+                        
+                        // Create subtask input container
+                        if (subtaskList.style.display === 'block') {
+                            const inputContainer = document.createElement('div');
+                            inputContainer.className = 'subtask-input-container';
+                            
                             const subtaskInput = document.createElement('input');
                             subtaskInput.type = 'text';
+                            subtaskInput.placeholder = 'Enter subtask...';
+                            
                             const addSubtaskButton = document.createElement('button');
                             addSubtaskButton.textContent = 'Add Subtask';
-                            listItem.appendChild(subtaskInput);
-                            listItem.appendChild(addSubtaskButton);
-
+                            
+                            inputContainer.appendChild(subtaskInput);
+                            inputContainer.appendChild(addSubtaskButton);
+                            listItem.appendChild(inputContainer);
+                            
                             addSubtaskButton.addEventListener('click', () => {
                                 const subtaskText = subtaskInput.value.trim();
-                                if (subtaskText) {
-                                    addTask(subtaskText, taskObject.date, true, taskObject);
+                                if (subtaskText && taskObject.date) {
+                                    this.addTask(subtaskText, taskObject.date, true, taskObject);
                                     subtaskInput.value = '';
+                                    
+                                    // Make sure the subtask is displayed in the correct subtask list
+                                    this.renderTasks();
                                 }
                             });
-                        } else {
-                            subtaskList.style.display = 'none';
-                            const subtaskInput = listItem.querySelector('input');
-                            const addSubtaskButton = listItem.querySelector('button:last-of-type');
-                            if (subtaskInput) {
-                                subtaskInput.remove();
-                            }
-                            if (addSubtaskButton) {
-                                addSubtaskButton.remove();
-                            }
                         }
                     });
                 }
-            }
-
-
-            function excelUploadEventListener(event) {
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        const data = new Uint8Array(e.target.result);
-                        const workbook = XLSX.read(data, {
-                            type: 'array'
-                        });
-                        const sheetName = workbook.SheetNames[0];
-                        const worksheet = workbook.Sheets[sheetName];
-                        const jsonData = XLSX.utils.sheet_to_json(worksheet, {
-                            header: 1
-                        });
-
-                        jsonData.forEach((row) => {
-                            if (row[0] && row[2]) {
-                                let excelDate = row[0];
-                                let jsDate;
-
-                                if (typeof excelDate === 'number') {
-                                    jsDate = new Date((excelDate - 25569) * 86400 * 1000);
-                                } else if (excelDate instanceof Date) {
-                                    jsDate = excelDate;
-                                } else {
-                                    jsDate = new Date(excelDate);
-                                }
-
-                                if (isNaN(jsDate)) {
-                                    console.error("Invalid date:", excelDate);
-                                    return;
-                                }
-                                const formattedDate = jsDate.toISOString().slice(0, 10);
-                                addTask(row[2], formattedDate);
-                            }
-                        });
-                        renderTasks();
-                    };
-                    reader.readAsArrayBuffer(file);
-                }
-            }
-
-            function loadTasks(userId) {
-                const tasksRef = database.ref(`users/${userId}/tasks`);
-                tasksRef.on('value', (snapshot) => {
-                    const data = snapshot.val();
-                    if (data) {
-                        tasksByDate = data;
-                        for (const date in tasksByDate) {
-                            tasksByDate[date].forEach(task => {
-                                if (!task.element) {
-                                    task.element = document.createElement('li');
-                                }
-                            });
-                        }
-                        renderTasks();
-                        totalTasks = Object.values(tasksByDate).flat().length;
-                        completedTasks = Object.values(tasksByDate).flat().filter(task => task.isCompleted).length;
-                        updateTaskCounts();
-                    } else {
-                        totalTasks = 0;
-                        completedTasks = 0;
-                        tasksByDate = {};
-                        renderTasks(); // Ensure empty lists are rendered
-                        updateTaskCounts();
-                    }
-                });
-            }
-
-            function saveTasks() {
-                if (currentUser) {
-                    database.ref(`users/${currentUser.uid}/tasks`).set(tasksByDate)
-                        .then(() => {
-                            saveMessage.textContent = 'Progress saved successfully!';
-                            setTimeout(() => {
-                                saveMessage.textContent = '';
-                            }, 3000);
-                        })
-                        .catch((error) => {
-                            console.error("Error saving data:", error); // Log the error to the console
-                            saveMessage.textContent = 'Error saving progress: ' + error.message;
-                            setTimeout(() => {
-                                saveMessage.textContent = '';
-                            }, 3000);
-                        });
-                } else {
-                    saveMessage.textContent = 'Please log in to save your progress.';
-                    setTimeout(() => {
-                        saveMessage.textContent = '';
-                    }, 3000);
-                }
-            }
-
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    currentUser = user;
-                    loginButton.textContent = 'Logout';
-                    loginMessage.textContent = 'Logged in as ' + user.email;
-                    inputContainer.style.display = 'flex';
-                    taskSections.style.display = 'flex';
-                    loadTasks(user.uid);
-                    saveButton.style.display = 'block';
-                } else {
-                    currentUser = null;
-                    loginButton.textContent = 'Login/Signup';
-                    loginMessage.textContent = '';
-                    inputContainer.style.display = 'none';
-                    taskSections.style.display = 'none';
-                    taskList.innerHTML = '<h2>Active Tasks</h2>';
-                    completedTaskList.innerHTML = '<h2>Completed Tasks</h2>';
-                    incompleteTaskList.innerHTML = '<h2>Incomplete Tasks</h2>';
-                    totalTasks = 0;
-                    completedTasks = 0;
-                    tasksByDate = {};
-                    renderTasks();
-                    updateTaskCounts();
-                    saveButton.style.display = 'none';
-                }
-            });
-
-            loginButton.addEventListener('click', () => {
-                if (currentUser) {
-                    auth.signOut();
-                } else {
-                    const email = prompt('Enter your email:');
-                    const password = prompt('Enter your password:');
-
-                    if (email && password) {
-                        auth.signInWithEmailAndPassword(email, password)
-                            .catch(error => {
-                                auth.createUserWithEmailAndPassword(email, password)
-                                    .catch(error => {
-                                        loginMessage.textContent = 'Error: ' + error.message;
-                                    });
-                            });
-                    }
-                }
-            });
-
-            addTaskButton.addEventListener('click', () => {
-                const taskText = taskInput.value.trim();
-                const taskDueDate = taskDate.value;
-
-                if (taskText && taskDueDate) {
-                    addTask(taskText, taskDueDate);
-                    taskInput.value = '';
-                    taskDate.value = '';
-                }
-            });
-            excelUpload.addEventListener('change', excelUploadEventListener);
-
-            // Date Picker Functionality
-            function showDatePicker(task, listItem) {
+            },
+            
+            showDatePicker(task, listItem) {
+                // Create overlay to detect clicks outside the date picker
+                const overlay = document.createElement('div');
+                overlay.className = 'date-picker-overlay';
+                document.body.appendChild(overlay);
+                
                 const datePickerContainer = document.createElement('div');
                 datePickerContainer.className = 'date-picker-container';
 
                 const datePicker = document.createElement('div');
                 datePicker.className = 'date-picker';
+                
+                // Add header with close button
+                const header = document.createElement('div');
+                header.className = 'date-picker-header';
+                
+                const title = document.createElement('span');
+                title.textContent = 'Select Date';
+                
+                const closeButton = document.createElement('button');
+                closeButton.textContent = '×';
+                closeButton.style.padding = '2px 8px';
+                closeButton.addEventListener('click', () => {
+                    datePickerContainer.remove();
+                    overlay.remove();
+                });
+                
+                header.appendChild(title);
+                header.appendChild(closeButton);
+                datePicker.appendChild(header);
 
                 const today = new Date();
                 let currentMonth = today.getMonth();
@@ -660,60 +625,85 @@
                     const startingDay = firstDay.getDay();
 
                     const table = document.createElement('table');
-                    const header = table.insertRow();
-                    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-                    days.forEach(day => {
-                        const th = document.createElement('th');
-                        th.textContent = day;
-                        header.appendChild(th);
+                    const thead = document.createElement('thead');
+                    const tbody = document.createElement('tbody');
+
+                    // Month and Year Header
+                    const monthYearRow = document.createElement('tr');
+                    const monthYearTh = document.createElement('th');
+                    monthYearTh.colSpan = 7;
+                    monthYearTh.textContent = `${new Date(year, month).toLocaleString('default', { month: 'long' })} ${year}`;
+                    monthYearRow.appendChild(monthYearTh);
+                    thead.appendChild(monthYearRow);
+
+                    // Days of the Week Header
+                    const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                    const daysRow = document.createElement('tr');
+                    daysOfWeek.forEach(day => {
+                        const dayTh = document.createElement('th');
+                        dayTh.textContent = day;
+                        daysRow.appendChild(dayTh);
                     });
+                    thead.appendChild(daysRow);
+
+                    table.appendChild(thead);
 
                     let dayCount = 1;
                     for (let i = 0; i < 6; i++) {
-                        const row = table.insertRow();
+                        const row = document.createElement('tr');
                         for (let j = 0; j < 7; j++) {
-                            if ((i === 0 && j < startingDay) || dayCount > daysInMonth) {
+                            if (i === 0 && j < startingDay) {
                                 const cell = document.createElement('td');
                                 cell.textContent = '';
                                 row.appendChild(cell);
-                            } else {
+                            } else if (dayCount <= daysInMonth) {
                                 const cell = document.createElement('td');
                                 cell.textContent = dayCount;
-                                if (year === today.getFullYear() && month === today.getMonth() && dayCount === today.getDate()) {
-                                    cell.classList.add('selected');
-                                }
                                 cell.addEventListener('click', () => {
                                     const selectedDate = new Date(year, month, dayCount);
                                     const formattedDate = selectedDate.toISOString().slice(0, 10);
 
-                                    // Remove task from old date
-                                    const taskDate = task.date;
-                                    tasksByDate[taskDate] = tasksByDate[taskDate].filter(existingTask => existingTask !== task);
-                                    if (tasksByDate[taskDate].length === 0) {
-                                        delete tasksByDate[taskDate];
-                                    }
+                                    //Confirm Button
+                                    const confirmButton = document.createElement('button');
+                                    confirmButton.textContent = 'Confirm';
+                                    confirmButton.addEventListener('click', () => {
 
-                                    // Update task date
-                                    task.date = formattedDate;
+                                        // Remove task from old date
+                                        state.tasksByDate[task.date] = state.tasksByDate[task.date].filter(existingTask => existingTask !== task);
+                                        if (state.tasksByDate[task.date].length === 0) {
+                                            delete state.tasksByDate[task.date];
+                                        }
 
-                                    // Add task to new date
-                                    if (!tasksByDate[formattedDate]) {
-                                        tasksByDate[formattedDate] = [];
-                                    }
-                                    tasksByDate[formattedDate].push(task);
+                                        // Update task date
+                                        task.date = formattedDate;
 
-                                    renderTasks();
-                                    datePickerContainer.remove();
+                                        // Add task to new date
+                                        if (!state.tasksByDate[formattedDate]) {
+                                            state.tasksByDate[formattedDate] = [];
+                                        }
+                                        state.tasksByDate[formattedDate].push(task);
+
+                                        taskManager.renderTasks();
+                                        datePickerContainer.remove();
+                                        overlay.remove();
+                                    });
+                                    cell.appendChild(confirmButton);
                                 });
                                 row.appendChild(cell);
                                 dayCount++;
+                            } else {
+                                const cell = document.createElement('td');
+                                cell.textContent = '';
+                                row.appendChild(cell);
                             }
                         }
+                        tbody.appendChild(row);
                         if (dayCount > daysInMonth) {
                             break;
                         }
                     }
 
+                    table.appendChild(tbody);
                     return table;
                 }
 
@@ -723,14 +713,286 @@
 
                 // Show the date picker
                 datePicker.style.display = 'block';
+                
+                // Close when clicking outside
+                overlay.addEventListener('click', () => {
+                    datePickerContainer.remove();
+                    overlay.remove();
+                });
             }
+        };
 
-            saveButton.addEventListener('click', () => {
-                saveTasks();
+        // Data management functions
+        const dataManager = {
+            loadTasks(userId) {
+                console.log("Loading tasks for user:", userId);
+                const tasksRef = database.ref(`users/${userId}/tasks`);
+                tasksRef.once('value', (snapshot) => {
+                    const data = snapshot.val();
+                    console.log("Loaded data:", data);
+                    
+                    if (data) {
+                        // Transform the data from Firebase into the format we need
+                        state.tasksByDate = {};
+                        state.totalTasks = 0;
+                        state.completedTasks = 0;
+                        
+                        for (let date in data) {
+                            if (data.hasOwnProperty(date) && date) {
+                                state.tasksByDate[date] = [];
+                                
+                                for (let taskId in data[date]) {
+                                    if (data[date].hasOwnProperty(taskId)) {
+                                        const task = data[date][taskId];
+                                        
+                                        // Skip invalid tasks
+                                        if (!task || !task.date) {
+                                            console.warn("Skipping invalid task:", task);
+                                            continue;
+                                        }
+                                        
+                                        state.totalTasks++;
+                                        if (task.isCompleted) {
+                                            state.completedTasks++;
+                                        }
+
+                                        // Create the list item element
+                                        const listItem = document.createElement('li');
+                                        listItem.innerHTML = `
+                                            <span style="${task.isSubtask ? 'margin-left: 20px;' : ''}">${task.text}</span>
+                                            <button class="complete">${task.isCompleted ? '✅' : '😊'}</button>
+                                            <button class="incomplete">${task.isCompleted ? '❌' : '🙁'}</button>
+                                            <button class="inprogress">${task.isInProgress ? '▶️' : '😐'}</button>
+                                            ${task.isSubtask ? '' : '<button class="subtask">Subtasks</button>'}
+                                            <button class="edit-date">Edit Date</button>
+                                            <button class="delete">Delete</button>
+                                            ${task.isSubtask ? '' : '<ul class="subtasks" style="display:none;"></ul>'}
+                                        `;
+
+                                        // Create task object
+                                        const taskObject = {
+                                            text: task.text || "",
+                                            date: task.date,
+                                            element: listItem,
+                                            isCompleted: !!task.isCompleted,
+                                            isSubtask: !!task.isSubtask,
+                                            parentTask: task.parentTask || null,
+                                            isNew: !!task.isNew,
+                                            isInProgress: !!task.isInProgress
+                                        };
+
+                                        // Add task to tasksByDate
+                                        state.tasksByDate[task.date].push(taskObject);
+
+                                        // Initialize element
+                                        taskManager.initializeTaskElement(taskObject);
+                                    }
+                                }
+                            }
+                        }
+                        
+                        taskManager.renderTasks();
+                        utils.updateTaskCounts();
+                        console.log(`Loaded ${state.totalTasks} tasks, ${state.completedTasks} completed.`);
+                    } else {
+                        state.totalTasks = 0;
+                        state.completedTasks = 0;
+                        state.tasksByDate = {};
+                        utils.updateTaskCounts();
+                        console.log("No saved tasks found.");
+                    }
+                }).catch(error => {
+                    console.error("Error loading tasks:", error);
+                });
+            },
+
+            saveTasks: utils.debounce(function() {
+                if (state.currentUser) {
+                    // Transform the data into the format Firebase needs
+                    const firebaseTasks = {};
+                    
+                    for (let date in state.tasksByDate) {
+                        if (state.tasksByDate.hasOwnProperty(date) && date) { // Ensure date is valid
+                            firebaseTasks[date] = {};
+                            
+                            state.tasksByDate[date].forEach((task, index) => {
+                                // Ensure all required properties exist
+                                if (task && task.date) {
+                                    firebaseTasks[date][index] = {
+                                        text: task.text || "",
+                                        date: task.date,
+                                        isCompleted: !!task.isCompleted,
+                                        isSubtask: !!task.isSubtask,
+                                        parentTask: task.parentTask || null,
+                                        isNew: !!task.isNew,
+                                        isInProgress: !!task.isInProgress
+                                    };
+                                }
+                            });
+                            
+                            // If no tasks for this date, remove empty object
+                            if (Object.keys(firebaseTasks[date]).length === 0) {
+                                delete firebaseTasks[date];
+                            }
+                        }
+                    }
+                    
+                    // Only save if we have data
+                    if (Object.keys(firebaseTasks).length > 0) {
+                        database.ref(`users/${state.currentUser.uid}/tasks`).set(firebaseTasks)
+                            .then(() => {
+                                console.log("Data saved successfully!");
+                                utils.showNotification("Progress saved successfully!");
+                            })
+                            .catch(error => {
+                                console.error("Error saving data: ", error);
+                                utils.showNotification("Failed to save: " + error.message, true);
+                            });
+                    } else {
+                        console.log("No tasks to save.");
+                        utils.showNotification("No tasks to save");
+                    }
+                } else {
+                    console.log("User not logged in, cannot save tasks.");
+                    utils.showNotification("Please log in to save tasks", true);
+                }
+            }, 300),
+            
+            processExcelUpload(file) {
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const sheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[sheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    
+                    let tasksAddedSuccessfully = 0;
+
+                    jsonData.forEach((row, index) => {
+                        // Skip if the first cell contains the string "Date" (likely a header)
+                        if (!row[0] || row[0] === "Date" || 
+                            (typeof row[0] === "string" && row[0].toLowerCase() === "date")) {
+                            return;
+                        }
+                        
+                        if (row[0] && row[2]) {
+                            const jsDate = utils.parseExcelDate(row[0]);
+                            if (!jsDate) {
+                                console.error("Invalid date:", row[0]);
+                                return;
+                            }
+                            
+                            const formattedDate = jsDate.toISOString().slice(0, 10);
+                            
+                            // Ensure we have a valid date before adding the task
+                            if (formattedDate && formattedDate !== "Invalid Date") {
+                                taskManager.addTask(row[2], formattedDate);
+                                tasksAddedSuccessfully++;
+                            } else {
+                                console.error("Invalid formatted date:", formattedDate);
+                            }
+                        }
+                    });
+                    
+                    console.log(`Added ${tasksAddedSuccessfully} tasks from Excel file.`);
+                    utils.showNotification(`Added ${tasksAddedSuccessfully} tasks`);
+                    
+                    if (tasksAddedSuccessfully > 0) {
+                        taskManager.renderTasks();
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            }
+        };
+
+        // Event handlers
+        function setupEventListeners() {
+            elements.saveButton.addEventListener('click', dataManager.saveTasks);
+            
+            elements.excelUpload.addEventListener('change', (event) => {
+                dataManager.processExcelUpload(event.target.files[0]);
             });
+            
+            elements.addTaskButton.addEventListener('click', () => {
+                const taskText = elements.taskInput.value.trim();
+                const taskDueDate = elements.taskDate.value;
+
+                if (taskText && taskDueDate) {
+                    taskManager.addTask(taskText, taskDueDate);
+                    elements.taskInput.value = '';
+                    elements.taskDate.value = '';
+                }
+            });
+            
+            elements.loginButton.addEventListener('click', () => {
+                if (state.currentUser) {
+                    auth.signOut();
+                } else {
+                    const email = prompt('Enter your email:');
+                    const password = prompt('Enter your password:');
+
+                    if (email && password) {
+                        auth.signInWithEmailAndPassword(email, password)
+                            .catch(error => {
+                                auth.createUserWithEmailAndPassword(email, password)
+                                    .catch(error => {
+                                        elements.loginMessage.textContent = 'Error: ' + error.message;
+                                    });
+                            });
+                    }
+                }
+            });
+        }
+
+        // Authentication state handling
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                state.currentUser = user;
+                elements.loginButton.textContent = 'Logout';
+                elements.loginMessage.textContent = 'Logged in as ' + user.email;
+                elements.inputContainer.style.display = 'flex';
+                elements.taskSections.style.display = 'flex';
+                dataManager.loadTasks(user.uid);
+            } else {
+                state.currentUser = null;
+                elements.loginButton.textContent = 'Login/Signup';
+                elements.loginMessage.textContent = '';
+                elements.inputContainer.style.display = 'none';
+                elements.taskSections.style.display = 'none';
+                elements.taskList.innerHTML = '<h2>Active Tasks</h2>';
+                elements.completedTaskList.innerHTML = '<h2>Completed Tasks</h2>';
+                elements.incompleteTaskList.innerHTML = '<h2>Incomplete Tasks</h2>';
+                state.totalTasks = 0;
+                state.completedTasks = 0;
+                state.tasksByDate = {};
+                utils.updateTaskCounts();
+            }
         });
-        /* --- End JavaScript --- */
-    </script>
+
+        // Initialize the app
+        setupEventListeners();
+    });
+    /* --- End JavaScript --- */
+</script>
 </body>
 
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
